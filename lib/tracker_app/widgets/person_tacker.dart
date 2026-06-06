@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_pro/indexed_stack/managers/cubit/tracker.dart';
+import 'package:flutter_pro/tracker_app/managers/cubit/tracker.dart';
 
 class PersonTracker extends StatelessWidget {
   const PersonTracker({super.key, required this.name, required this.score});

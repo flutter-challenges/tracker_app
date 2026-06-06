@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pro/indexed_stack/index_stack_app.dart';
+import 'package:flutter_pro/tracker_app/tracker_app.dart';
 
-/// Flutter code sample for [IndexedStack].
+/// Flutter code sample for [TrackerApp].
 
-void main() => runApp(const IndexedStackApp());
+void main() => runApp(const TrackerApp());

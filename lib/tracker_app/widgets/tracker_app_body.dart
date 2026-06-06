@@ -1,12 +1,12 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_pro/indexed_stack/managers/cubit/tracker.dart';
-import 'package:flutter_pro/indexed_stack/widgets/arrow_widget.dart';
-import 'package:flutter_pro/indexed_stack/widgets/person_tacker.dart';
+import 'package:flutter_pro/tracker_app/managers/cubit/tracker.dart';
+import 'package:flutter_pro/tracker_app/widgets/arrow_widget.dart';
+import 'package:flutter_pro/tracker_app/widgets/person_tacker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class IndexedStackExample extends StatelessWidget {
-  const IndexedStackExample({super.key});
+class TrackerAppBody extends StatelessWidget {
+  const TrackerAppBody({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +123,18 @@ class IndexedStackExample extends StatelessWidget {
                   ),
                 ],
               ),
-              // Row(
+            
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+
+
+  // Row(
               //   mainAxisAlignment: MainAxisAlignment.center,
               //   children: [
               //     ArrowWidget(
@@ -165,10 +176,3 @@ class IndexedStackExample extends StatelessWidget {
               //     ),
               //   ],
               // ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
