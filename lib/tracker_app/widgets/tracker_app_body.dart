@@ -4,6 +4,7 @@ import 'package:flutter_pro/tracker_app/managers/cubit/tracker.dart';
 import 'package:flutter_pro/tracker_app/widgets/arrow_widget.dart';
 import 'package:flutter_pro/tracker_app/widgets/person_tacker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TrackerAppBody extends StatelessWidget {
   const TrackerAppBody({super.key});
@@ -20,7 +21,7 @@ class TrackerAppBody extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: 300,
+                width: 300.w,
                 child: TextField(
                   controller: context.read<TrackerCubit>().fieldText,
                   decoration: InputDecoration(
@@ -32,21 +33,21 @@ class TrackerAppBody extends StatelessWidget {
                       Icons.person_add_rounded,
                       color: Colors.blue,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 16,
+                    contentPadding:  EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 16.h,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15.r),
                       borderSide: BorderSide(
                         color: Colors.grey.withOpacity(0.2),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: const BorderSide(
+                      borderRadius: BorderRadius.circular(15.r),
+                      borderSide:  BorderSide(
                         color: Colors.blue,
-                        width: 2,
+                        width: 2.sp,
                       ),
                     ),
                   ),
@@ -57,7 +58,7 @@ class TrackerAppBody extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(height: 50),
+               SizedBox(height: 50.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -69,8 +70,8 @@ class TrackerAppBody extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SizedBox(
-                      height: 180,
-                      width: 240,
+                      height: 180.h,
+                      width: 240.w,
                       child: Center(
                         child: AnimatedSwitcher(
                           duration: const Duration(
@@ -87,20 +88,20 @@ class TrackerAppBody extends StatelessWidget {
                                 );
                               },
                           child: switch (state) {
-                            TrackerEmpty() => const Text(
+                            TrackerEmpty() =>  Text(
                               'No persons to track yet!\nAdd someone above.',
                               key: ValueKey('empty'),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.grey,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                             TrackerAddLoading() =>
-                              const CircularProgressIndicator(
+                               CircularProgressIndicator(
                                 key: ValueKey('loading'),
-                                strokeWidth: 3,
+                                strokeWidth: 3.sp,
                               ),
                             TrackerUpdated() => () {
                               final currentEntry = state.persons.entries
