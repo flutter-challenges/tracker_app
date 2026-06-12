@@ -16,15 +16,23 @@ class TrackerAppView extends StatelessWidget {
       child: Scaffold(
         body: SafeArea(
           child: BlocConsumer<GameSessionCubit, GameSessionState>(
-
             //* we take action when state changes like in our case when session ends we show endded dialog.
             listener: (context, state) {
               if (state is GameSessionEnded) {
                 _showSessionEndedDialog(context, state);
               }
             },
+            /*
+              * listenWhen : 
+              * it work when state changes into GameSessionEnded and show Ended dialog.
+            */
             listenWhen: (previous, current) => current is GameSessionEnded,
 
+            /*
+              * buildWhen : 
+              * it work with all states like GameSessionInitial, GameSessionActive but not with GameSessionEnded.
+              * it works as changes tracker view from initial into active.
+            */
             buildWhen: (previous, current) => current is! GameSessionEnded,
 
             //* here we determine wether body should show initial view or active view.

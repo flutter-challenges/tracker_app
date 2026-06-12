@@ -9,6 +9,10 @@ import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/ses
 import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/arrow_widget.dart';
 
 class TrackerActiveView extends StatefulWidget {
+  /*
+     * gameSessionActiveState : 
+     * gameSessionActiveState contains data like session model which contains list of persons, duration and winner.
+  */
   final GameSessionActive gameSessionActiveState;
   const TrackerActiveView({super.key, required this.gameSessionActiveState});
 
