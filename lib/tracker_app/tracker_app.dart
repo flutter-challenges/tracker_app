@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pro/tracker_app/widgets/tracker_app_body.dart';
+import 'package:flutter_pro/tracker_app/session_feature/presentation/views/tracker_app_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TrackerApp extends StatelessWidget {
@@ -12,7 +12,7 @@ class TrackerApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(home: Scaffold(body: const TrackerAppBody()));
+        return MaterialApp(home: Scaffold(body: const TrackerAppView()));
       },
     );
   }
