@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pro/tracker_app/session_feature/managers/game_session_cubit/game_session_cubit_cubit.dart';
-import 'package:flutter_pro/tracker_app/session_feature/data/models/session_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PersonTracker extends StatelessWidget {
@@ -9,13 +8,10 @@ class PersonTracker extends StatelessWidget {
     super.key, 
     required this.name, 
     required this.score,
-    required this.session, // استلام السيشن الحالية
   });
   
   final String name;
   final int score;
-  final SessionModel session;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -78,8 +74,6 @@ class PersonTracker extends StatelessWidget {
             ),
             icon: Icon(Icons.add_rounded, size: 20.sp),
             onPressed: () {
-              // باصينا الاسم والسيشن الحالية للـ Cubit
-              // context.read<TrackerCubit>().incrementScore(name, session);
               context.read<GameSessionCubit>().incrementScore(name);
             },
             label: Text(

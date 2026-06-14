@@ -13,14 +13,16 @@ class GameSessionInitial extends GameSessionState {}
 class GameSessionActive extends GameSessionState {
   /*
     * in session model we hold data like list of persons, start time, end time, duration, and winner.
+    * currentPersonIndex is used to know which person is currently active in the session, and we use it to show the arrow next to the active person.
+    * isAddLoading is used to show a loading indicator when we are adding a new person to the session, and we set it to true when we are adding a new person, and set it to false when the person is added.
   */
   final SessionModel session;
-  final int currentIndex;
+  final int currentPersonIndex;
   final bool isAddLoading; 
 
   GameSessionActive({
     required this.session,
-    this.currentIndex = 0,
+    this.currentPersonIndex = 0,
     this.isAddLoading = false,
   });
   /*
@@ -28,12 +30,12 @@ class GameSessionActive extends GameSessionState {
   */
   GameSessionActive copyWith({
     SessionModel? session,
-    int? currentIndex,
+    int? currentPersonIndex,
     bool? isAddLoading,
   }) {
     return GameSessionActive(
       session: session ?? this.session,
-      currentIndex: currentIndex ?? this.currentIndex,
+      currentPersonIndex: currentPersonIndex ?? this.currentPersonIndex,
       isAddLoading: isAddLoading ?? this.isAddLoading,
     );
   }

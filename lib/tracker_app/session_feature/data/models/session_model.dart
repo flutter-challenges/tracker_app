@@ -1,32 +1,31 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 
 @immutable
 class SessionModel {
   final DateTime startTime;
   final DateTime? endTime;
-  //===>for name and score
   final Map<String, int> persons; 
-  final bool isActive;
 
   const SessionModel({
     required this.startTime,
     this.endTime,
     required this.persons,
-    this.isActive = true,
   });
 
   String get winner {
     if (persons.isEmpty) return "No participants";
     
-    final firstEntry = persons.entries.first;
-    int maxScore = firstEntry.value;
-    List<String> currentWinners = [firstEntry.key];
+    final firstPerson = persons.entries.first;
+    int maxPersonScore = firstPerson.value;
+    List<String> currentWinners = [firstPerson.key];
 
     persons.forEach((name, score) {
-      if (score > maxScore) {
-        maxScore = score;
+      if (score > maxPersonScore) {
+        maxPersonScore = score;
         currentWinners = [name]; 
-      } else if (score == maxScore && !currentWinners.contains(name)) {
+      } else if (score == maxPersonScore && !currentWinners.contains(name)) {
         currentWinners.add(name); 
       }
     });
@@ -47,10 +46,11 @@ class SessionModel {
   * we get minuts & seconds.
   * we use it in session_timer widget to show the live timer in "mm:ss" format.
   */
-  String get durationString {
+  String get durationInMinutesAndSeconds {
     final totalSeconds = duration.inSeconds;
     final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
     final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
+    log('Duration: $minutes:$seconds');
     return '$minutes:$seconds';
   }
 
@@ -64,7 +64,6 @@ class SessionModel {
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       persons: persons ?? Map<String, int>.from(this.persons),
-      isActive: isActive ?? this.isActive,
     );
   }
 
@@ -73,7 +72,6 @@ class SessionModel {
       'startTime': startTime.toIso8601String(),
       'endTime': endTime?.toIso8601String(),
       'persons': persons,
-      'isActive': isActive,
     };
   }
 
@@ -82,7 +80,6 @@ class SessionModel {
       startTime: DateTime.parse(json['startTime'] as String),
       endTime: json['endTime'] != null ? DateTime.parse(json['endTime'] as String) : null,
       persons: Map<String, int>.from(json['persons'] as Map),
-      isActive: json['isActive'] as bool,
     );
   }
 
@@ -93,13 +90,11 @@ class SessionModel {
           runtimeType == actor.runtimeType &&
           startTime == actor.startTime &&
           endTime == actor.endTime &&
-          isActive == actor.isActive &&
           mapEquals(persons, actor.persons);
 
   @override
   int get hashCode => 
       startTime.hashCode ^ 
       endTime.hashCode ^ 
-      persons.hashCode ^ 
-      isActive.hashCode;
+      persons.hashCode ; 
 }

@@ -8,10 +8,9 @@ class GameSessionCubit extends Cubit<GameSessionState> {
 
   Timer? _timer;
   /*
-    * when we start new session it's should that start time be now.
+    * when we start new session it's should that start time be DateTime.now().
     * map of persons be empty.
     * end time be null because it not yet ended.
-    * isActive be true because it's active session.
   */
   void startNewSession() {
     _timer?.cancel();
@@ -22,6 +21,13 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     _startTimer(newSession);
   }
 
+
+  /*
+    *start timer method is reponsible for starting the timer and emitting the active state with the session model.
+    * it work in tow cases : 
+    * 1- when we start new session.
+    * 2- when we load existing session.
+  */
   void _startTimer(SessionModel sessionModel) {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final currentState = state;
@@ -32,13 +38,17 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     emit(GameSessionActive(session: sessionModel));
   }
 
+
+  /*
+    * the stop button it appeare when length of persons > 1 & session is gameSessionActive.
+    * it take last sessionModel and create new one with update endTime , then emit gameSessionEnded with final session and winner name.
+  */
   void endSession() {
     if (state is GameSessionActive) {
       _timer?.cancel();
       final currentState = state as GameSessionActive;
       final endedSession = currentState.session.copyWith(
         endTime: DateTime.now(),
-        isActive: false,
       );
       emit(
         GameSessionEnded(
@@ -49,23 +59,24 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     }
   }
 
+
   Future<void> addPerson(String name) async {
     if (name.trim().isEmpty || state is! GameSessionActive) return;
     final currentState = state as GameSessionActive;
-
+    //? loading
     emit(currentState.copyWith(isAddLoading: true));
     await Future.delayed(const Duration(seconds: 1));
-
+    //? add person at the new person at 0 "at beging of the map".
     final updatedPersons = {name: 0, ...currentState.session.persons};
-    final updatedSession = currentState.session.copyWith(
+    final updatedSessionModel = currentState.session.copyWith(
       persons: updatedPersons,
     );
 
     emit(
       currentState.copyWith(
-        session: updatedSession,
+        session: updatedSessionModel,
         isAddLoading: false,
-        currentIndex: 0,
+        currentPersonIndex: 0,
       ),
     );
   }
@@ -92,8 +103,8 @@ class GameSessionCubit extends Cubit<GameSessionState> {
       final total = currentState.session.persons.length;
       if (total <= 1) return;
 
-      final nextIndex = (currentState.currentIndex + 1) % total;
-      emit(currentState.copyWith(currentIndex: nextIndex));
+      final nextIndex = (currentState.currentPersonIndex + 1) % total;
+      emit(currentState.copyWith(currentPersonIndex: nextIndex));
     }
   }
 
@@ -103,9 +114,9 @@ class GameSessionCubit extends Cubit<GameSessionState> {
       final total = currentState.session.persons.length;
       if (total <= 1) return;
 
-      int prevIndex = currentState.currentIndex - 1;
+      int prevIndex = currentState.currentPersonIndex - 1;
       if (prevIndex < 0) prevIndex = total - 1;
-      emit(currentState.copyWith(currentIndex: prevIndex));
+      emit(currentState.copyWith(currentPersonIndex: prevIndex));
     }
   }
 

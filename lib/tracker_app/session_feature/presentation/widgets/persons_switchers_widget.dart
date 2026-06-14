@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_pro/tracker_app/session_feature/managers/game_session_cubit/game_session_cubit_state.dart';
 import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/person_tacker.dart';
@@ -31,15 +33,20 @@ class PersonsSwitchersWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCarouselContent(GameSessionActive state) {
-    if (state.isAddLoading) {
+  Widget _buildCarouselContent(GameSessionActive gameSessionActiveState) {
+    /*
+      * if isLoading true we show CircularProgressIndicator.
+      * if the list of persons is empty we show a text to indicate that there are no "persons to track".
+      * otherwise we show the current active person with their score.
+    */
+    if (gameSessionActiveState.isAddLoading) {
       return CircularProgressIndicator(
         key: const ValueKey('loading'),
         strokeWidth: 3.sp,
       );
     }
 
-    if (state.session.persons.isEmpty) {
+    if (gameSessionActiveState.session.persons.isEmpty) {
       return Text(
         'No persons to track yet!\nAdd someone above.',
         key: const ValueKey('empty'),
@@ -47,15 +54,23 @@ class PersonsSwitchersWidget extends StatelessWidget {
         style: TextStyle(color: Colors.grey, fontSize: 16.sp),
       );
     }
+    /*
+      * we have extract currnet person index from the gameSessionActiveState.
+      * to get map of person as <name , score>.
+    */
+    final currentPersonEntry = gameSessionActiveState.session.persons.entries.elementAt(
+      gameSessionActiveState.currentPersonIndex,
+    );
 
-    final currentEntry = state.session.persons.entries.elementAt(
-      state.currentIndex,
+    log(
+      'Current Person: ${currentPersonEntry.key}, Score: ${currentPersonEntry.value} , {Index: ${gameSessionActiveState.currentPersonIndex}}',
     );
+
     return PersonTracker(
-      key: ValueKey(currentEntry.key),
-      name: currentEntry.key,
-      score: currentEntry.value,
-      session: state.session,
+      key: ValueKey(currentPersonEntry.key),
+      name: currentPersonEntry.key,
+      score: currentPersonEntry.value,
     );
+
   }
 }

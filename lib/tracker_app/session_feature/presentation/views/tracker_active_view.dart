@@ -10,8 +10,8 @@ import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/arr
 
 class TrackerActiveView extends StatefulWidget {
   /*
-     * gameSessionActiveState : 
-     * gameSessionActiveState contains data like session model which contains list of persons, duration and winner.
+     * we take gameSessionActiveState as parameter because it provide TrackerActiveView with data like : 
+     * session model which contains list of persons, duration and winner.
   */
   final GameSessionActive gameSessionActiveState;
   const TrackerActiveView({super.key, required this.gameSessionActiveState});
@@ -48,7 +48,7 @@ class _TrackerActiveViewState extends State<TrackerActiveView> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 16.h),
             child: SessionTimer(
-              timerText: sessionModel.durationString,
+              timerText: sessionModel.durationInMinutesAndSeconds,
               currentWinner: sessionModel.winner,
             ),
           ),
