@@ -6,7 +6,7 @@ import 'package:flutter_pro/tracker_app/session_feature/data/models/session_mode
 class GameSessionCubit extends Cubit<GameSessionState> {
   GameSessionCubit() : super(GameSessionInitial());
 
-  Timer? _timer;
+  Timer? _timer;  
   /*
     * when we start new session it's should that start time be DateTime.now().
     * map of persons be empty.
@@ -120,6 +120,20 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     }
   }
 
+  void disableSession()
+  {
+    if (state is GameSessionActive) {
+      final currentState = state as GameSessionActive;
+      emit(currentState.copyWith(isDisabled: true));
+    }
+  }
+  void enableSession()
+  {
+    if (state is GameSessionActive) {
+      final currentState = state as GameSessionActive;
+      emit(currentState.copyWith(isDisabled: false));
+    }
+  }
   @override
   Future<void> close() {
     _timer?.cancel();

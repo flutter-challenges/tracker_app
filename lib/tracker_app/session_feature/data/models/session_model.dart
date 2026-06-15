@@ -42,9 +42,9 @@ class SessionModel {
   }
 
   /*
-  * We calculate the total seconds from the duration, then derive minutes and seconds.
-  * we get minuts & seconds.
-  * we use it in session_timer widget to show the live timer in "mm:ss" format.
+    * We calculate the total seconds from the duration, then derive minutes and seconds.
+    * we get minuts & seconds.
+    * we use it in session_timer widget to show the live timer in "mm:ss" format.
   */
   String get durationInMinutesAndSeconds {
     final totalSeconds = duration.inSeconds;

@@ -9,10 +9,6 @@ import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/ses
 import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/arrow_widget.dart';
 
 class TrackerActiveView extends StatefulWidget {
-  /*
-     * we take gameSessionActiveState as parameter because it provide TrackerActiveView with data like : 
-     * session model which contains list of persons, duration and winner.
-  */
   final GameSessionActive gameSessionActiveState;
   const TrackerActiveView({super.key, required this.gameSessionActiveState});
 
@@ -39,7 +35,10 @@ class _TrackerActiveViewState extends State<TrackerActiveView> {
   Widget build(BuildContext context) {
     final cubit = context.read<GameSessionCubit>();
     final sessionModel = widget.gameSessionActiveState.session;
-    final bool isArrowsActive = sessionModel.persons.length > 1;
+    
+    final bool isDisabled = widget.gameSessionActiveState.isDisabled; 
+    
+    final bool isArrowsActive = sessionModel.persons.length > 1 && !isDisabled;
 
     return SingleChildScrollView(
       child: Column(
@@ -54,23 +53,32 @@ class _TrackerActiveViewState extends State<TrackerActiveView> {
           ),
           SizedBox(height: 30.h),
 
-          AddPersonTextField(nameController: _nameController),
+          AbsorbPointer(
+            absorbing: isDisabled, 
+            child: Opacity(
+              opacity: isDisabled ? 0.5 : 1, 
+              child: AddPersonTextField(nameController: _nameController),
+            ),
+          ),
           SizedBox(height: 40.h),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ArrowWidget(
-                isArrowsActive: isArrowsActive,
-                onTap: () => cubit.previousPerson(),
+                isArrowsActive: isArrowsActive, 
+                onTap:  () => cubit.previousPerson(),
                 isLeftArrow: true,
               ),
-              PersonsSwitchersWidget(
-                gameSessionActiveState: widget.gameSessionActiveState,
+              Opacity(
+                opacity: isDisabled ? 0.6 : 1.0,
+                child: PersonsSwitchersWidget(
+                  gameSessionActiveState: widget.gameSessionActiveState,
+                ),
               ),
               ArrowWidget(
-                isArrowsActive: isArrowsActive,
-                onTap: () => cubit.nextPerson(),
+                isArrowsActive: isArrowsActive, 
+                onTap:  () => cubit.nextPerson(), 
                 isLeftArrow: false,
               ),
             ],
@@ -78,16 +86,63 @@ class _TrackerActiveViewState extends State<TrackerActiveView> {
           SizedBox(height: 40.h),
 
           if (sessionModel.persons.isNotEmpty)
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                        elevation: 2,
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                      ),
+                      onPressed: () => cubit.endSession(),
+                      icon: const Icon(Icons.stop_rounded),
+                      label: Text(
+                        'Finish Session',
+                        style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+
+                  Expanded(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDisabled ? Colors.green : Colors.orange,
+                          foregroundColor: Colors.white,
+                          elevation: 2,
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (isDisabled) {
+                            cubit.enableSession();
+                          } else {
+                            cubit.disableSession();
+                          }
+                        },
+                        icon: Icon(isDisabled ? Icons.play_arrow_rounded : Icons.pause_rounded),
+                        label: Text(
+                          isDisabled ? 'Enable' : 'Disable',
+                          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              onPressed: () => cubit.endSession(),
-              icon: const Icon(Icons.stop_rounded),
-              label: const Text('Finish & Show Winner'),
-            ),
+            )
         ],
       ),
     );

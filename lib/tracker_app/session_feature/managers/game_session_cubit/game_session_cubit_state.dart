@@ -19,11 +19,12 @@ class GameSessionActive extends GameSessionState {
   final SessionModel session;
   final int currentPersonIndex;
   final bool isAddLoading; 
-
+  final bool isDisabled; // this is used to indicate if the session is disabled or not, and we set it to true when the session is disabled, and set it to false when the session is enabled.
   GameSessionActive({
     required this.session,
     this.currentPersonIndex = 0,
     this.isAddLoading = false,
+    this.isDisabled = false,
   });
   /*
   * we use this method to create a new instance of the class with updated values.
@@ -32,11 +33,13 @@ class GameSessionActive extends GameSessionState {
     SessionModel? session,
     int? currentPersonIndex,
     bool? isAddLoading,
+    bool? isDisabled,
   }) {
     return GameSessionActive(
       session: session ?? this.session,
       currentPersonIndex: currentPersonIndex ?? this.currentPersonIndex,
       isAddLoading: isAddLoading ?? this.isAddLoading,
+      isDisabled: isDisabled ?? this.isDisabled,
     );
   }
 }
