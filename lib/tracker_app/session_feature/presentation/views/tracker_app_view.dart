@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pro/tracker_app/session_feature/presentation/views/tracker_active_view.dart';
 import 'package:flutter_pro/tracker_app/session_feature/presentation/views/tracker_initial_view.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/show_ended_dialog.dart';
 import 'package:flutter_pro/tracker_app/session_feature/managers/game_session_cubit/game_session_cubit_cubit.dart';
 import 'package:flutter_pro/tracker_app/session_feature/managers/game_session_cubit/game_session_cubit_state.dart';
 
@@ -19,7 +19,7 @@ class TrackerAppView extends StatelessWidget {
             //* we take action when state changes like in our case when session ends we show endded dialog.
             listener: (context, state) {
               if (state is GameSessionEnded) {
-                _showSessionEndedDialog(context, state);
+                showSessionEndedDialog(context, state);
               }
             },
             /*
@@ -49,28 +49,4 @@ class TrackerAppView extends StatelessWidget {
     );
   }
 
-  void _showSessionEndedDialog(BuildContext context, GameSessionEnded state) {
-    final cubit = context.read<GameSessionCubit>();
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('🎉 Session Ended!'),
-        content: Text(
-          'The Winner is: ${state.winnerName}\n'
-          'Total Duration: ${state.finalSession.duration.inMinutes} mins : ${state.finalSession.duration.inSeconds} secs',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              cubit.startNewSession();
-            },
-            child: const Text('Start New Session'),
-          ),
-        ],
-      ),
-    );
-  }
 }

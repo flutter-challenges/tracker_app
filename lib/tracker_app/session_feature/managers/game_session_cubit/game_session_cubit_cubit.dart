@@ -7,13 +7,9 @@ class GameSessionCubit extends Cubit<GameSessionState> {
   GameSessionCubit() : super(GameSessionInitial());
 
   Timer? _timer;  
-  /*
-    * when we start new session it's should that start time be DateTime.now().
-    * map of persons be empty.
-    * end time be null because it not yet ended.
-  */
+
   void startNewSession() {
-    _timer?.cancel();
+    _stopTimer(); 
     final newSession = SessionModel(
       startTime: DateTime.now(),
       persons: const {},
@@ -21,14 +17,14 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     _startTimer(newSession);
   }
 
+  void goToDashBoard() {
+    _stopTimer();
+    emit(GameSessionInitial());
+  }
 
-  /*
-    *start timer method is reponsible for starting the timer and emitting the active state with the session model.
-    * it work in tow cases : 
-    * 1- when we start new session.
-    * 2- when we load existing session.
-  */
   void _startTimer(SessionModel sessionModel) {
+    _stopTimer(); 
+    
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final currentState = state;
       if (currentState is GameSessionActive) {
@@ -38,14 +34,9 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     emit(GameSessionActive(session: sessionModel));
   }
 
-
-  /*
-    * the stop button it appeare when length of persons > 1 & session is gameSessionActive.
-    * it take last sessionModel and create new one with update endTime , then emit gameSessionEnded with final session and winner name.
-  */
   void endSession() {
     if (state is GameSessionActive) {
-      _timer?.cancel();
+      _stopTimer();
       final currentState = state as GameSessionActive;
       final endedSession = currentState.session.copyWith(
         endTime: DateTime.now(),
@@ -59,14 +50,19 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     }
   }
 
+  void _stopTimer() {
+    if (_timer != null && _timer!.isActive) {
+      _timer!.cancel();
+    }
+  }
 
   Future<void> addPerson(String name) async {
     if (name.trim().isEmpty || state is! GameSessionActive) return;
     final currentState = state as GameSessionActive;
-    //? loading
+    
     emit(currentState.copyWith(isAddLoading: true));
-    await Future.delayed(const Duration(seconds: 1));
-    //? add person at the new person at 0 "at beging of the map".
+    await Future.delayed(const Duration(seconds: 1)); 
+    
     final updatedPersons = {name: 0, ...currentState.session.persons};
     final updatedSessionModel = currentState.session.copyWith(
       persons: updatedPersons,
@@ -84,9 +80,7 @@ class GameSessionCubit extends Cubit<GameSessionState> {
   void incrementScore(String name) {
     if (state is GameSessionActive) {
       final currentState = state as GameSessionActive;
-      final updatedPersons = Map<String, int>.from(
-        currentState.session.persons,
-      );
+      final updatedPersons = Map<String, int>.from(currentState.session.persons);
       updatedPersons[name] = (updatedPersons[name] ?? 0) + 1;
 
       emit(
@@ -120,23 +114,23 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     }
   }
 
-  void disableSession()
-  {
+  void disableSession() {
     if (state is GameSessionActive) {
       final currentState = state as GameSessionActive;
       emit(currentState.copyWith(isDisabled: true));
     }
   }
-  void enableSession()
-  {
+
+  void enableSession() {
     if (state is GameSessionActive) {
       final currentState = state as GameSessionActive;
       emit(currentState.copyWith(isDisabled: false));
     }
   }
+
   @override
   Future<void> close() {
-    _timer?.cancel();
+    _stopTimer();
     return super.close();
   }
 }

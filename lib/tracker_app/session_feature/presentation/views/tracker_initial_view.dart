@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/dashboard/action_section.dart';
+import 'package:flutter_pro/tracker_app/session_feature/presentation/widgets/dashboard/analytic_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_pro/tracker_app/session_feature/managers/game_session_cubit/game_session_cubit_cubit.dart';
 
 class TrackerInitialView extends StatelessWidget {
   const TrackerInitialView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.all(16.r),
-        ),
-        onPressed: () => context.read<GameSessionCubit>().startNewSession(),
-        icon: const Icon(Icons.play_arrow_rounded),
-        label: Text(
-          'Start Session to Track',
-          style: TextStyle(fontSize: 16.sp),
+    final theme = Theme.of(context);
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AnalyticUi(),
+            SizedBox(height: 32.h),
+            Text(
+              'Actions & History',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            SizedBox(height: 12.h),
+            ActionSection(),
+          ],
         ),
       ),
     );
