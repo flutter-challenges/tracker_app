@@ -1,11 +1,25 @@
 import 'dart:async';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pro/tracker_app/session_feature/managers/game_session_cubit/game_session_cubit_state.dart';
 import 'package:flutter_pro/tracker_app/session_feature/data/models/session_model.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-class GameSessionCubit extends Cubit<GameSessionState> {
-  GameSessionCubit() : super(GameSessionInitial());
+class GameSessionCubit extends HydratedCubit<GameSessionState> {
+  GameSessionCubit() : super(GameSessionInitial()) {
+    _checkAndResumeTimerAfterHydration();
+  }
+
   Timer? _timer;
+
+  void _checkAndResumeTimerAfterHydration() {
+    if (state is GameSessionActive) {
+      final activeState = state as GameSessionActive;
+      _startTimer(
+        activeState.session, 
+        currentPersonIndex: activeState.currentPersonIndex,
+        isDisabled: activeState.isDisabled,
+      );
+    }
+  }
 
   void startNewSession() {
     _stopTimer();
@@ -55,7 +69,6 @@ class GameSessionCubit extends Cubit<GameSessionState> {
   void resumeSession() {
     if (state is GameSessionActivePaused) {
       final currentState = state as GameSessionActivePaused;
-      //? we start timer with session model that we store in GameSessionActivePaused state.
       _startTimer(
         currentState.session,
         currentPersonIndex: currentState.currentPersonIndex,
@@ -89,6 +102,7 @@ class GameSessionCubit extends Cubit<GameSessionState> {
     if (_timer != null && _timer!.isActive) {
       _timer!.cancel();
     }
+    _timer = null;
   }
 
   Future<void> addPerson(String name) async {
@@ -126,18 +140,6 @@ class GameSessionCubit extends Cubit<GameSessionState> {
         ),
       );
     }
-
-
-
-
-
-
-
-
-
-
-
-    
   }
 
   void nextPerson() {
@@ -181,5 +183,69 @@ class GameSessionCubit extends Cubit<GameSessionState> {
   Future<void> close() {
     _stopTimer();
     return super.close();
+  }
+  
+  //? ==========================================
+  //! HYDRATED BLOC PERSISTENCE IMPLEMENTATION
+  //? ==========================================
+
+  //! read state 
+  @override
+  GameSessionState? fromJson(Map<String, dynamic> json) {
+    try {
+      final String stateType = json['type'] as String;
+      
+      switch (stateType) {
+        case 'GameSessionActive':
+          return GameSessionActive(
+            session: SessionModel.fromJson(json['session'] as Map<String, dynamic>),
+            currentPersonIndex: json['currentPersonIndex'] as int,
+            isDisabled: json['isDisabled'] as bool,
+            isAddLoading: false, 
+          );
+          
+        case 'GameSessionActivePaused':
+          return GameSessionActivePaused(
+            session: SessionModel.fromJson(json['session'] as Map<String, dynamic>),
+            currentPersonIndex: json['currentPersonIndex'] as int,
+            isDisabled: json['isDisabled'] as bool,
+          );
+          
+        case 'GameSessionInitial':
+        case 'GameSessionEnded':
+        default:
+          return GameSessionInitial();
+      }
+    } catch (_) {
+      return GameSessionInitial(); 
+    }
+  }
+  
+  //! write state
+  @override
+  Map<String, dynamic>? toJson(GameSessionState state) {
+    if (state is GameSessionActive) {
+      return {
+        'type': 'GameSessionActive',
+        'session': state.session.toJson(),
+        'currentPersonIndex': state.currentPersonIndex,
+        'isDisabled': state.isDisabled,
+      };
+    }
+    
+    if (state is GameSessionActivePaused) {
+      return {
+        'type': 'GameSessionActivePaused',
+        'session': state.session.toJson(),
+        'currentPersonIndex': state.currentPersonIndex,
+        'isDisabled': state.isDisabled,
+      };
+    }
+    
+    if (state is GameSessionEnded) {
+      return {'type': 'GameSessionEnded'};
+    }
+    
+    return {'type': 'GameSessionInitial'};
   }
 }
