@@ -37,13 +37,33 @@ class _TrackerActiveViewState extends State<TrackerActiveView> {
     final sessionModel = widget.gameSessionActiveState.session;
     
     final bool isDisabled = widget.gameSessionActiveState.isDisabled; 
-    
     final bool isArrowsActive = sessionModel.persons.length > 1 && !isDisabled;
 
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                  ),
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+                  onPressed: () => cubit.pauseActiveSession(),
+                ),
+                Text(
+                  'Live Session',
+                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 40),
+              ],
+            ),
+          ),
+
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 16.h),
             child: SessionTimer(
@@ -67,7 +87,7 @@ class _TrackerActiveViewState extends State<TrackerActiveView> {
             children: [
               ArrowWidget(
                 isArrowsActive: isArrowsActive, 
-                onTap:  () => cubit.previousPerson(),
+                onTap: () => cubit.previousPerson(),
                 isLeftArrow: true,
               ),
               Opacity(
@@ -78,7 +98,7 @@ class _TrackerActiveViewState extends State<TrackerActiveView> {
               ),
               ArrowWidget(
                 isArrowsActive: isArrowsActive, 
-                onTap:  () => cubit.nextPerson(), 
+                onTap: () => cubit.nextPerson(), 
                 isLeftArrow: false,
               ),
             ],
